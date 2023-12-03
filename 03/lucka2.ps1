@@ -1,10 +1,7 @@
 [CmdletBinding()]
 param(
     [ValidateNotNull()]
-    [String]$Path,
-
-    [ValidateSet(10,140)]
-    [int]$RowLength = 10
+    [String]$Path
 )
 
 function AdjacentStars([int]$CurrentSymbol) {
@@ -109,41 +106,33 @@ function Reset() {
     return "", $false, @()
 }
 
+$RowLength = (Get-Content $Path -ReadCount 1).Length
+
 $Data = (Get-Content $Path).ToCharArray()
 $CurrentChar = 0
 $StarPositions = @()
 $Stars = @{}
 
 foreach ($c in $Data) {
-    if (NewLine $CurrentChar) {
-        Write-Debug "NewLine: $CurrentChar"
+    Write-Debug "CurrentChar: $c"
+
+    if (($c -match "[^0-9]") -or (NewLine $CurrentChar)) {
         if ($CurrentNumberString) {
             Write-Information "Current: $CurrentNumberString"
             Write-Information ("Adjacent Stars: $StarPositions")
-        }
-        $StarPositions | Sort-Object -Unique | ForEach-Object {
-            $Stars[$_] += , [int]$CurrentNumberString
+            $StarPositions | Sort-Object -Unique | ForEach-Object {
+                $Stars[$_] += , [int]$CurrentNumberString
+            }
         }
 
         $CurrentNumberString, $Valid, $StarPositions = Reset
     }
-
-    Write-Debug "CurrentChar: $c"
 
     if ($c -match "[0-9]") {
         $CurrentNumberString += $c
         $StarPositions += , (AdjacentStars $CurrentChar)
-    } else {
-        if ($CurrentNumberString) {
-            Write-Information "Current: $CurrentNumberString"
-            Write-Information ("Adjacent Stars: $StarPositions")
-        }
-        $StarPositions | Sort-Object -Unique | ForEach-Object {
-            $Stars[$_] += , [int]$CurrentNumberString
-        }
-
-        $CurrentNumberString, $Valid, $StarPositions = Reset
     }
+
     $CurrentChar++
 }
 
