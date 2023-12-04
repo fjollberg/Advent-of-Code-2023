@@ -21,6 +21,7 @@ function Get-Wins {
     }
 }
 
+
 function Get-ScratchCards {
     param (
         [int]$ScratchCard
@@ -52,7 +53,7 @@ Get-Content $Path | ForEach-Object {
     $Draws = $Matches.draws.trim() -split "[^0-9]+" | Foreach-Object {[int]$_}
     $Winning = $Matches.winning.trim() -split "[^0-9]+" | Foreach-Object {[int]$_}
 
-    Write-Debug ("Card {0}, winning: {1}, draws: {2}" -f $Matches.nr, ($Winning -join ","), ($Draws -join ","))
+    Write-Debug ("Card {0}; winning: {1}; draws: {2}" -f $Matches.nr, ($Winning -join ","), ($Draws -join ","))
 
     $Data[[int]$Matches.nr] = @{
         Draws = $Draws
