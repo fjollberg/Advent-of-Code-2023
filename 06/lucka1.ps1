@@ -29,4 +29,4 @@ for ([int]$Race = 0; $Race -lt $Time.Count; $Race++) {
 }
 
 Write-Debug ("Wins: {0}" -f ($Wins -join ","))
-Write-Debug ("Product: {0}" -f $Product)
+$Product
