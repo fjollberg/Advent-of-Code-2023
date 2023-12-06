@@ -4,5 +4,6 @@ param(
     [String]$Path
 )
 
-$Columns = (Get-Content $Path -ReadCount 1).Length
-$Rows = (Get-Content $Path).Count
+$Data = Get-Content $Path
+$Columns = $Data[0].length
+$Rows = $Data.length
