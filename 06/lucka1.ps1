@@ -5,8 +5,6 @@ param(
 )
 
 $Data = Get-Content $Path
-$Columns = $Data[0].Length
-$Rows = $Data.Length
 
 $Time = [long[]]((($Data[0] -split ":")[1]).trim() -split "\W+")
 $Distance = [long[]]((($Data[1] -split ":")[1]).trim() -split "\W+")
