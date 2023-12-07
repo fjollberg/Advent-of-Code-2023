@@ -104,23 +104,13 @@ function Get-Hand {
         $OtherCards = $Groups | Where-Object -Property Name -NE -Value 'J' | Sort-Object -Property Count -Descending
 
         Write-Debug ("Found other cards: {0} in {1}" -f ($OtherCards.Name -join ','), $Cards)
-
-        switch ($OtherCards[0].Count) {
-            {$_ -ge 3} {
-                Get-Hand ($Cards -replace 'J', $OtherCards[0].Name)
-                break;
-            }
-            default {
-                $Max = $OtherCards[0]
-                Foreach ($Group in ($OtherCards | Where-Object -Property Count -EQ $OtherCards[0].Count)) {
-                    if ((Get-Value $Group.Name) -gt (Get-Value $Max.Name)) {
-                        $Max = $Group                        
-                    }
-                }
-                Get-Hand ($Cards -replace 'J', $Max.Name)
-                break
+        $Max = $OtherCards[0]
+        Foreach ($Group in ($OtherCards | Where-Object -Property Count -EQ $OtherCards[0].Count)) {
+            if ((Get-Value $Group.Name) -gt (Get-Value $Max.Name)) {
+                $Max = $Group                        
             }
         }
+        Get-Hand ($Cards -replace 'J', $Max.Name)
     }
 }
 
