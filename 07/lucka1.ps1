@@ -15,6 +15,7 @@ enum Hands {
     FiveOfAKind
 }
 
+
 class Hand : System.IComparable {
     [string]$Cards
     [Hands]$Hand
@@ -27,10 +28,6 @@ class Hand : System.IComparable {
     }
 
     [int] CompareTo($that) {
-        If (-Not($that -is [Hand])) {
-            Throw "Not comparable!!"
-        }
-
         if ($this.Hand -ne $that.Hand) {
             return $this.Hand - $that.Hand            
         }
@@ -64,6 +61,7 @@ function Get-Value {
         }
     }
 }
+
 
 function Get-Hand {
     param (
