@@ -9,16 +9,19 @@ $Cols = $Data[0].length
 $Rows = $Data.length
 
 $Tiles = @()
-$Covered = @()
 
 foreach ($line in $Data) {
     $Tiles += , ($line.ToCharArray())
-    $Covered += , ($line.ToCharArray())
 }
 
 Write-Debug ("Tiles:")
 for ([int]$i = 0; $i -lt $Tiles.Length; $i++) {
     Write-Debug ("{0}" -f ($Tiles[$i] -join ''))
+}
+
+$Slabs = @()
+for ([int]$i = 0; $i -lt $Tiles.Length; $i++) {
+    $Slabs += ,(' ' * $Tiles[0].Length).ToCharArray()
 }
 
 
@@ -123,8 +126,8 @@ function Find-Path {
 
     $Tiles[$CurrentRow][$CurrentCol]
     $Tiles[$NextRow][$NextCol]
-    $Covered[$CurrentRow][$CurrentCol] = '*'
-    $Covered[$NextRow][$NextCol] = '*'
+    $Slabs[$CurrentRow][$CurrentCol] = $Tiles[$CurrentRow][$CurrentCol]
+    $Slabs[$NextRow][$NextCol] = $Tiles[$NextRow][$NextCol]
 
     while ($true) {
         $R, $C = Get-NextCoordinate $CurrentRow $CurrentCol $NextRow $NextCol
@@ -132,7 +135,7 @@ function Find-Path {
             break
         }
         $Tiles[$R][$C]
-        $Covered[$R][$C] = '*'
+        $Slabs[$R][$C] = $Tiles[$R][$C]
         $CurrentRow, $CurrentCol = $NextRow, $NextCol
         $NextRow, $NextCol = $R, $C
     }
@@ -143,27 +146,6 @@ function Find-Path {
 Write-Debug ("Starting point: {0},{1}" -f $StartRow, $StartCol)
 
 [char[]]$Path = Find-Path $StartRow $StartCol
-
-Write-Debug ("Covered:")
-for ([int]$i = 0; $i -lt $Covered.Length; $i++) {
-    Write-Debug ("{0}" -f ($Covered[$i] -join ''))
-}
-
-$Slabs = @()
-for ([int]$i = 0; $i -lt $Covered.Length; $i++) {
-    $Slabs += ,(' ' * $Covered[0].Length).ToCharArray()
-}
-
-for ([int]$i = 0; $i -lt $Tiles.Length; $i++) {
-    $Str = $Tiles[$i] -join ''
-    $t = 0
-    while (($t = $Str.IndexOfAny('|-FLJ7S', $t)) -ge 0) {
-        if ($Covered[$i][$t] -eq [char]'*') {
-            $Slabs[$i][$t] = $Tiles[$i][$t]
-        }
-        $t += 1
-    }   
-}
 
 Write-Debug ("Slabs:")
 for ([int]$i = 0; $i -lt $Slabs.Length; $i++) {
@@ -202,18 +184,16 @@ function Test-Contained {
 }
 
 for ([int]$i = 0; $i -lt $Tiles.Length; $i++) {
-    if ($Covered[$i] -contains [char]'*') {
-        Write-Debug ("Pondering: {0}" -f ($Covered[$i] -join ''))
-        Write-Debug ("Slab:      {0}" -f ($Slabs[$i] -join ''))
-        for ([int]$t = 0; $t -lt $Tiles[0].Length; $t++) {
-            if ($Covered[$i][$t] -ne [char]'*') {
-                if (Test-Contained $i $t) {
-                    $Count+=1
-                    Write-Debug ("Found {0},{1} count {2}" -f $i, $t, $Count)
-                }
+    Write-Debug ("Pondering: {0}" -f ($Tiles[$i] -join ''))
+    Write-Debug ("Slab:      {0}" -f ($Slabs[$i] -join ''))
+    for ([int]$t = 0; $t -lt $Tiles[0].Length; $t++) {
+        if (($Slabs[$i][$t] -eq [char]' ')) {
+            if (Test-Contained $i $t) {
+                $Count+=1
+                Write-Debug ("Found {0},{1} count {2}" -f $i, $t, $Count)
             }
-        }        
-    }
+        }
+    }        
 }
 
 $Count
