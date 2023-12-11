@@ -3,7 +3,7 @@ param(
     [ValidateNotNull()]
     [String]$Path,
 
-    $Count
+    $Count = 1
 )
 
 $Data = Get-Content $Path
@@ -83,18 +83,13 @@ function Get-ExpandedUniverseByRow {
         $Steps
     )
 
-    for ([int]$r = 0; $r -lt $Row; $r++) {
-        , $Universe[$r]
-    }
+    $Universe[0..($Row)]
 
-    , ('.' * $Universe[0].Length).ToCharArray()
-    While ($Steps-- -gt 0) {
+    while ($Steps--) {
         , ('.' * $Universe[0].Length).ToCharArray()
     }
 
-    for ([int]$r = $Row + 1; $r -lt $Universe.Length; $r++) {
-        , $Universe[$r]
-    }
+    $Universe[($Row + 1)..($Universe.Length-1)]
 }
 
 
