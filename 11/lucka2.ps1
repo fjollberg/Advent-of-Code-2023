@@ -6,19 +6,6 @@ param(
     $Count = 1
 )
 
-$Data = Get-Content $Path
-
-$Universe = @()
-
-foreach ($line in $Data) {
-    $Universe += , ($line.ToCharArray())
-}
-
-Write-Debug ("Universe:")
-for ([int]$i = 0; $i -lt $Universe.Length; $i++) {
-    Write-Debug ("{0}" -f ($Universe[$i] -join ''))
-}
-
 
 function Get-Stars {
     param (
@@ -56,26 +43,6 @@ function Test-Expandable {
 }
 
 
-$ExpandableRows = for ([int]$r = 0; $r -lt $Universe.Length; $r++) {
-    if (Test-Expandable $Universe[$r]) {
-        $r        
-    }
-}
-
-$ExpandableColumns = for ([int]$c = 0; $c -lt $Universe[0].Length; $c++) {
-    $Column = for ([int]$r = 0; $r -lt $Universe.Length; $r++) {
-        $Universe[$r][$c]
-    }
-
-    if (Test-Expandable $Column) {
-        $c
-    }
-}
-
-Write-Debug ("Expandable Rows: {0} Columns: {1}" -f ($ExpandableRows -join ','), ($ExpandableColumns -join ','))
-
-$OriginalDistance = Get-Distance (Get-Stars $Universe)
-
 function Get-ExpandedUniverseByRow {
     param(
         [int]$Row,
@@ -106,6 +73,40 @@ function Get-ExpandedUniverseByCol {
         , ($Universe[$r][0..($Col-1)] + ('.' * (1+$Steps)).ToCharArray() + $Universe[$r][($Col+1)..($Length-1)])
     }
 }
+
+
+$Data = Get-Content $Path
+
+$Universe = @()
+
+foreach ($line in $Data) {
+    $Universe += , ($line.ToCharArray())
+}
+
+Write-Debug ("Universe:")
+for ([int]$i = 0; $i -lt $Universe.Length; $i++) {
+    Write-Debug ("{0}" -f ($Universe[$i] -join ''))
+}
+
+$ExpandableRows = for ([int]$r = 0; $r -lt $Universe.Length; $r++) {
+    if (Test-Expandable $Universe[$r]) {
+        $r        
+    }
+}
+
+$ExpandableColumns = for ([int]$c = 0; $c -lt $Universe[0].Length; $c++) {
+    $Column = for ([int]$r = 0; $r -lt $Universe.Length; $r++) {
+        $Universe[$r][$c]
+    }
+
+    if (Test-Expandable $Column) {
+        $c
+    }
+}
+
+Write-Debug ("Expandable Rows: {0} Columns: {1}" -f ($ExpandableRows -join ','), ($ExpandableColumns -join ','))
+
+$OriginalDistance = Get-Distance (Get-Stars $Universe)
 
 $Steps = 1
 
