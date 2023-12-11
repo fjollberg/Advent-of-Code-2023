@@ -5,8 +5,6 @@ param(
 )
 
 $Data = Get-Content $Path
-$Cols = $Data[0].length
-$Rows = $Data.length
 
 $Tiles = @()
 
