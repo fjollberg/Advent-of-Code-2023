@@ -109,8 +109,8 @@ function Get-Stars {
 
 for ([int]$i = 0; $i -lt $Stars.Length; $i++) {
     for ([int]$j = $i + 1; $j -lt $Stars.Length; $j++) {
-        $Distanse += [Math]::Abs($Stars[$j][0] - $Stars[$i][0]) + [Math]::Abs($Stars[$j][1] - $Stars[$i][1])
+        $Distance += [Math]::Abs($Stars[$j][0] - $Stars[$i][0]) + [Math]::Abs($Stars[$j][1] - $Stars[$i][1])
     }
 }
 
-$Distanse
+$Distance
